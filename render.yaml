@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: latitude-best
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: DISCORD_INVITE
+        sync: false
+      - key: SITE_STATUS
+        value: online
+      - key: STATUS_MESSAGE
+        value: ""
