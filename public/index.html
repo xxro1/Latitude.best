@@ -99,6 +99,31 @@
   footer{border-top:1px solid var(--edge);padding:26px 0 40px;color:var(--muted);font-size:.9rem}
   footer p{max-width:70ch}
 
+  /* ---------- demo section ---------- */
+  .demo-section{padding:64px 0;border-top:1px solid var(--edge)}
+  .demo-section .wrap{display:flex;flex-direction:column;align-items:center;text-align:center;gap:28px}
+  .demo-label{font-family:var(--head);font-weight:800;font-size:clamp(1.6rem,3.2vw,2.2rem);letter-spacing:-.02em}
+  .what-can{width:100%;max-width:620px;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;text-align:left}
+  .wc-item{border:1px solid var(--edge2);border-radius:12px;background:linear-gradient(180deg,#0e0e11,#08080a);padding:14px 16px}
+  .wc-icon{font-size:18px;margin-bottom:7px}
+  .wc-title{font-family:var(--head);font-size:.92rem;font-weight:700;margin-bottom:3px}
+  .wc-desc{font-size:.8rem;color:var(--muted);line-height:1.45}
+
+  .demo-stage{position:relative;width:100%;max-width:620px;cursor:none}
+  .demo-stage img.bg{width:100%;border-radius:10px;display:block;border:1px solid var(--edge2);box-shadow:0 20px 56px rgba(0,0,0,.75)}
+  .demo-cur{position:absolute;pointer-events:none;z-index:30;width:22px;height:22px;transition:left .48s cubic-bezier(.4,0,.2,1),top .48s cubic-bezier(.4,0,.2,1)}
+  .demo-cur svg{width:22px;height:22px;filter:drop-shadow(0 1px 3px #000d)}
+  .demo-ring{position:absolute;width:32px;height:32px;border:2px solid rgba(61,220,132,.85);border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);opacity:0;pointer-events:none}
+  .ue-ov{position:absolute;border-radius:2px;background:#3ddc84;opacity:0;transition:opacity .2s;display:flex;align-items:center;justify-content:center;color:#000;font-weight:900;line-height:1}
+  .x-fl{position:absolute;border-radius:50%;background:rgba(255,255,255,.2);opacity:0;pointer-events:none;transform:scale(0)}
+
+  .clip-box{width:100%;max-width:620px;border-radius:10px;overflow:hidden;border:1px solid var(--edge2);box-shadow:0 20px 56px rgba(0,0,0,.65);opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+  .clip-box.show{opacity:1;transform:translateY(0)}
+  .clip-box iframe{display:block;width:100%;height:348px;border:none}
+
+  .demo-tagline{max-width:50ch;color:var(--muted);font-size:1rem;line-height:1.6}
+  .demo-tagline strong{color:var(--text)}
+
   /* ---------- private admin panel ---------- */
   .admin-wrap{max-width:520px;margin:110px auto 70px;padding:0 20px}
   .admin-card{border:1px solid var(--edge2);border-radius:16px;background:linear-gradient(180deg,#101013,#08080a);padding:26px}
@@ -184,6 +209,32 @@
     </div>
   </div>
 
+  <!-- ===== DEMO SECTION ===== -->
+  <section class="demo-section" id="demo">
+    <div class="wrap">
+
+      <div class="demo-label">What It Can Do</div>
+
+      <!-- Live demo -->
+      <div class="demo-stage" id="demoStage">
+        <img class="bg" id="demoImg" src="https://i.imgur.com/hKpOhRO.png" alt="Latitude menu demo"/>
+        <div class="ue-ov" id="demoUeOv">✓</div>
+        <div class="x-fl" id="demoXFl"></div>
+        <div class="demo-cur" id="demoCur" style="left:-60px;top:-60px">
+          <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M4 2L20 12L12 13L8 22L4 2Z"/></svg>
+          <div class="demo-ring" id="demoRing"></div>
+        </div>
+      </div>
+
+      <div class="clip-box" id="demoClip">
+        <iframe src="https://streamable.com/e/a4wc49" allowfullscreen allow="autoplay"></iframe>
+      </div>
+
+      <p class="demo-tagline"><strong>Latitude.best</strong> is the best for HvH and will keep getting better and better — join now.</p>
+      <a class="btn go" data-discord href="#">Join the Discord</a>
+
+    </div>
+  </section>
 
 </main>
 
@@ -314,6 +365,63 @@
   setStatus(CONFIG.status,"",null);
   loadDiscordLink(); pollStatus(); pollDiscord();
   setInterval(pollStatus,30000); setInterval(pollDiscord,60000); setInterval(renderUpdated,15000);
+
+  /* ---------- demo animation ---------- */
+  (()=>{
+    const UE={fx:0.038,fy:0.183};
+    const X={fx:0.935,fy:0.022};
+    const stage=document.getElementById("demoStage");
+    const img=document.getElementById("demoImg");
+    const cur=document.getElementById("demoCur");
+    const ring=document.getElementById("demoRing");
+    const ueOv=document.getElementById("demoUeOv");
+    const xFl=document.getElementById("demoXFl");
+    const clip=document.getElementById("demoClip");
+    if(!stage) return;
+    function iw(){return img.offsetWidth;}
+    function ih(){return img.offsetHeight;}
+    function px(f){return{x:f.fx*iw()-11,y:f.fy*ih()-11};}
+    function placeOv(){
+      const cb=Math.max(10,iw()*0.033);
+      ueOv.style.cssText+=`;width:${cb}px;height:${cb}px;left:${UE.fx*iw()-cb/2}px;top:${UE.fy*ih()-cb/2}px;font-size:${cb*.7}px`;
+      const xs=Math.max(14,iw()*0.04);
+      xFl.style.cssText+=`;width:${xs}px;height:${xs}px;left:${X.fx*iw()-xs/2}px;top:${X.fy*ih()-xs/2}px`;
+    }
+    function wait(ms){return new Promise(r=>setTimeout(r,ms));}
+    function moveTo(pos){return new Promise(r=>{cur.style.left=pos.x+"px";cur.style.top=pos.y+"px";setTimeout(r,540);});}
+    function clickAnim(){
+      return new Promise(r=>{
+        ring.style.transition="none";ring.style.transform="translate(-50%,-50%) scale(0)";ring.style.opacity=".9";
+        setTimeout(()=>{
+          ring.style.transition="transform .4s ease-out,opacity .4s ease-out";
+          ring.style.transform="translate(-50%,-50%) scale(1.2)";ring.style.opacity="0";setTimeout(r,420);
+        },30);
+      });
+    }
+    async function run(){
+      placeOv();
+      ueOv.style.opacity="0";
+      xFl.style.opacity="0";xFl.style.transform="scale(0)";xFl.style.transition="";
+      cur.style.opacity="1";
+      cur.style.transition="none";
+      cur.style.left=(px(UE).x-120)+"px";cur.style.top=(px(UE).y+80)+"px";
+      await wait(60);
+      cur.style.transition="left .48s cubic-bezier(.4,0,.2,1),top .48s cubic-bezier(.4,0,.2,1)";
+      await wait(1000);
+      await moveTo(px(UE));await clickAnim();ueOv.style.opacity="1";
+      await wait(900);
+      await moveTo(px(X));await clickAnim();
+      xFl.style.transition="opacity .15s,transform .15s";xFl.style.opacity="1";xFl.style.transform="scale(1)";
+      await wait(200);xFl.style.opacity="0";xFl.style.transform="scale(0)";
+      cur.style.opacity="0";clip.classList.add("show");
+      await wait(4500);
+      clip.classList.remove("show");ueOv.style.opacity="0";
+      await wait(600);cur.style.left="-60px";cur.style.top="-60px";await wait(200);
+      run();
+    }
+    img.complete?run():img.onload=run;
+    window.addEventListener("resize",placeOv);
+  })();
 
 })();
 </script>
