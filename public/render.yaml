@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: latitude-best
+    env: static
+    staticPublishPath: .
+    headers:
+      - path: /*
+        name: Content-Security-Policy
+        value: "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; frame-src *; img-src * data: blob:; media-src *"
